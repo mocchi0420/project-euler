@@ -4,7 +4,6 @@ def euler003(target_num = 600851475143)
 	if prime?(target_num)
 		return target_num
 	else
-		p get_prime_factors(target_num)
 		return get_prime_factors(target_num).last
 	end
 end
