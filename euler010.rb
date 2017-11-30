@@ -1,27 +1,29 @@
 # coding: utf-8
-# Problem 7 「10001番目の素数」
+# Problem 10 「素数の和」
 
 
 require 'prime'
-def euler007
-	return Prime.each.take(10001).last
+def euler010
+	return Prime.each(2000000).to_a.inject(:+)
 end
+
 # ちゃんと手も動かした証拠を残しておく
 =begin
-def euler007(num=10001)
+def euler010(threshold=2000000)
 	count=0
-	base=1
+	base = 0
+	ret = 0
 	
-	while count < num do
+	while base < threshold do
 		if base < 3
 			base += 1
 		else
 			base += 2
 		end
-		count += 1 if isprime(base)
+		ret += base if isprime(base)
 	end
 
-	return base
+	return ret
 end
 
 def isprime(n)
