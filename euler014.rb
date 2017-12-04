@@ -2,43 +2,28 @@
 # Problem 14 「最長のコラッツ数列」
 
 # 簡単な方針
-# コラッツ数列は再現性があり、過去に登場した数値と全く同じ数値が計算途中で登場すればその後の計算を行う必要はない。
-# つまり、コラッツ数列とはある数AとBのセット列で考えればよく、
-# ex) 
-# n=2:2→1 より、n=2の際のセット数は1
-# n=3:3→10　より、n=3の際のセット数は10
-# n=10:10→5　より、n=10の際のセット数は5
-# ……といった感じで、ある数に対して対応するある数を求めれば良い
-# n=5はこのあと5→16→8→4→2となるため、最終的にn=4ではn=2の数列がセットとなる。
-# 
-# この事から、以下の方針でコラッツ数列を最大にする数値を求める。
-# (1)n=2において、コラッツ数列を求め、ハッシュにn=2の場合のコラッツ数列([2,1])を格納する。
-# (2)n=3以上において、以下のアルゴリズムで処理。
-#	(2-1)ハッシュ内にn=kが存在する場合、n=k+1にする。
-#	(2-2)ハッシュ内にn=kが存在しない場合は、すでに存在を確認しているn=jが見つかるまでコラッツ数列の処理を以下のように再帰で繰り返す
-#		(A)格納用の配列を用意してkを格納する。
-#		(B)kをコラッツ数列処理を行ってhoge = k/2またはhoge = 3k+1にする。
-#		(C)hogeがハッシュ内に存在するかどうかを判定し、存在していたらその配列を返して格納用の配列に格納してハッシュに入れる、存在していなかったら(A)からまたやりなおし
-#	(2-3)これ以上計算が不可能になった時点で、ハッシュの中からまだ数値の格納されていない最も若い数値をnに代入して計算を続行
-# (3)これを1～100万までの間、すべての数値が格納されるまで実行し、もっとも配列の要素数の多いnを取り出す
+# ※計算時間が長すぎたので方針転換
+# コラッツ数列が必ずhoge→……→2→1という形で1に収束していくことを考えると、ある数N(N>=3)のコラッツ数列はN-1までのコラッツ数列のいずれかを必ずどこかに含むはずである。
+# このことから考えて、愚直にコラッツ数列を求めるのではなく、コラッツ数列の長さのみを数列に格納していき、
+# arr[N] = (Nのコラッツ数列の長さ)　という形をとるようにし、数列の長さだけを計算する。
 
 require 'prime'
 def euler014(num=1000000)
-	my_hash = {2 => [2,1]}
-	ret = [2, [2,1]]
-	3.upto(num-1) do |idx|
-		next if my_hash[idx] != nil
-		tmp_arr = get_collatz(my_hash, idx)
-		ret = [idx, tmp_arr] if ret[1].length < tmp_arr.length
+	collatz_arr = Array.new(num, 1)
+	collatz_max = [1,1]
+	
+	2.upto(num-1) do |data|
+		index = data
+		count = 0
+		while index >= data do
+			index = (index % 2 == 0) ? index/2 : 3*index+1
+			count += 1
+		end
+		count += collatz_arr[index]
+		collatz_arr[data] = count
+		collatz_max = [data, count] if count > collatz_max[1]
 	end
-	return ret[0]
-end
+	
+	return collatz_max[0]
 
-def get_collatz(my_hash, idx)
-	return my_hash[idx] if my_hash[idx] != nil
-	my_arr = [idx]
-	tmp_idx = (idx % 2 == 0) ? idx/2 : 3*idx+1
-	my_arr << get_collatz(my_hash, tmp_idx)
-	my_hash.store(idx, my_arr.flatten)
-	return my_arr.flatten
 end
