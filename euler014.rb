@@ -14,30 +14,31 @@
 # この事から、以下の方針でコラッツ数列を最大にする数値を求める。
 # (1)n=2において、コラッツ数列を求め、ハッシュにn=2の場合のコラッツ数列([2,1])を格納する。
 # (2)n=3以上において、以下のアルゴリズムで処理。
-#	(2-1)ハッシュ内にn=kが存在しない場合、コラッツ数列の処理を1手順すすめる
-#	(2-2)ハッシュ内に1手順進めた際の数値jをキーとするデータがあるかを確認し、
-#		・存在する場合：ハッシュにn=kの場合[k,n=jの場合の数値ないしは配列を平坦化したもの]
-#		・存在しない場合：ハッシュにn=kの場合[k,j]を格納する
+#	(2-1)ハッシュ内にn=kが存在する場合、n=k+1にする。
+#	(2-2)ハッシュ内にn=kが存在しない場合は、すでに存在を確認しているn=jが見つかるまでコラッツ数列の処理を以下のように再帰で繰り返す
+#		(A)格納用の配列を用意してkを格納する。
+#		(B)kをコラッツ数列処理を行ってhoge = k/2またはhoge = 3k+1にする。
+#		(C)hogeがハッシュ内に存在するかどうかを判定し、存在していたらその配列を返して格納用の配列に格納してハッシュに入れる、存在していなかったら(A)からまたやりなおし
 #	(2-3)これ以上計算が不可能になった時点で、ハッシュの中からまだ数値の格納されていない最も若い数値をnに代入して計算を続行
 # (3)これを1～100万までの間、すべての数値が格納されるまで実行し、もっとも配列の要素数の多いnを取り出す
 
 require 'prime'
-def euler014(num=100)
+def euler014(num=1000000)
 	my_hash = {2 => [2,1]}
-	tmp_arr = []
-	3.upto(num) do |idx|
-		if my_hash[idx] == nil then
-			tmp_arr << idx
-			tmp_idx = (idx % 2 == 0) ? idx/2 : 3*idx+1
-			if my_hash[tmp_idx] == nil
-				tmp_arr << tmp_idx
-			else
-				tmp_arr << my_hash[tmp_idx]
-			end
-			my_hash.store(idx, tmp_arr.flatten)
-		end
-		tmp_arr = []
-		tmp_idx = 0
+	ret = [2, [2,1]]
+	3.upto(num-1) do |idx|
+		next if my_hash[idx] != nil
+		tmp_arr = get_collatz(my_hash, idx)
+		ret = [idx, tmp_arr] if ret[1].length < tmp_arr.length
 	end
-	p my_hash.max_by{|d| d[1].length}
+	return ret[0]
+end
+
+def get_collatz(my_hash, idx)
+	return my_hash[idx] if my_hash[idx] != nil
+	my_arr = [idx]
+	tmp_idx = (idx % 2 == 0) ? idx/2 : 3*idx+1
+	my_arr << get_collatz(my_hash, tmp_idx)
+	my_hash.store(idx, my_arr.flatten)
+	return my_arr.flatten
 end
