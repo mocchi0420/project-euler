@@ -3,27 +3,29 @@
 
 # 簡単な方針
 # n個の数値を並べる方法はn!通り。
-# ある数AをA=X10*10!+X9*9!+……+X2*2!+X1*1!
-# と置き、Xnの配列A(Xn)を取得する。
-# あとは流れで
+# 頭文字が0～9までの数字が辞書の何番目に存在するかを考えると、
+# 頭文字が0のとき：辞書の1番目から9!番目
+# 頭文字が1のとき：辞書の9!+1番目から2*9!番目
+# (中略)
+# 頭文字がnのとき：辞書のn*9!番目から(n+1)*9!番目
+# また、頭文字がnのとき、残った9つの数字がどのような順番に並ぶかについても同様に、
+# 頭文字がnで2番目の文字がmのとき：辞書のn*9!+m*8!番目からn*9!+(m+1)*8!番目
+# という形に表される。
+# このことから、
+# ある数AをA=X9*9!+……+X2*2!+X1*1!
+# と置き、Xnの配列A(Xn)を流れで算出して終了
 
 def euler024(num=1000000)
-	list = Array.new(11,0)
-	10.downto(1) do |idx|
-		tmp = num.divmod(get_fact(idx))
-		list[idx] = tmp[0]
-		num = tmp[1]	
+	num -= 1
+	index_list = (0..9).to_a
+	ret = []
+	9.downto(0) do |data|
+		tmp = num.divmod(get_fact(data))
+		ret << index_list[tmp[0]]
+		index_list.delete_at(tmp[0])
+		num = tmp[1]
 	end
-	
-	p list
-	
-	ret = 0
-	1.upto(10) do |idx|
-		ret += list[idx]*get_fact(idx)
-	end
-	p ret
-
-	return list
+	return ret.map{|d| d.to_s}.inject(:+).to_i
 end
 
 def get_fact(n)
