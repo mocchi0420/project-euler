@@ -2,36 +2,28 @@
 # Problem 30 「各桁の5乗」
 
 # 簡単な方針
-# とにかくめちゃくちゃ高速化には成功したので、リファクタは後でやる
-
-
+#
+# 各桁の5乗の和の取りうる範囲を考えると、n桁の際の最大値はn*9^5となる。
+# このとき、n桁の数値のはずなのに、n*9^5が10^nを下回っていはいけないので、n*9^5-10^n>0となる最大の整数値を探すとn=6
+# よって、1=1^5以外の任意の数を、0から6*9^5まで数え上げればいい……のだが、それでは計算時間があまりにもかかりすぎて現実的ではない。
+#
+# そこで、以下のアプローチを考える。
+# 10個の数値から重複を考慮して6個の数値を選び出すパターンは10H6=5005パターン
+# この総長5005の、10個の数値から重複を考慮して6個の数値を選び出すパターンの配列をAと置く。
+#
+# 0から6*9^5の数値を6つの数値の配列として考えた場合には、それは必ずこの5005個の何処かに格納される(例:271997=>[1,2,7,7,9,9]と同等とみなせる。)
+# 
+# 次に、配列Aを下に、各桁の5乗の和の配列Bを作成する。
+# この5乗和を同じように6つの数値の配列として考えた時に、Aに同じ配列が格納されていれば求めるべき答えを導ける。
+# あとは求められた数値の和を提示すればいい。
+# 
+# この場合には最初の配列Aと配列B作成こそ時間はかかるがどちらも所詮5005回のn倍のループで終了。
+# また、次のAとBの照合も5005回のn倍の計算量なので、0から6*9^5まで数え上げるよりも格段に計算量が下がると予想される。
 
 require 'prime'
-
 def euler030
-
-	start_time = Time.now
-
-	hoge = (0..9).to_a.map{|d| [d]}
-	1.upto(5) do |idx|
-		tmp = []
-		hoge.each do |d|
-			0.upto(9) do |num|
-				if d.max <= num
-					t_ary = Marshal.load(Marshal.dump(d))
-					t_ary << num
-					tmp << t_ary.sort
-				end
-			end
-		end
-		hoge = tmp
-	end
-	hoge = hoge.uniq
-	
-	ans_arr = hoge.map{|d| d.map{|e| e**5}.inject(:+)}
-	
-	loop_num = 6*9**5	# 最大ループ回数
-
+	base_arr = (0..9).to_a.repeated_combination(6).to_a	
+	ans_arr = base_arr.map{|d| d.map{|e| e**5}.inject(:+)}
 	ret = []
 	
 	ans_arr.each_with_index do |data, idx|
@@ -39,7 +31,7 @@ def euler030
 		if tmp_data.length < 6 then
 			(6-tmp_data.length).times{tmp_data << 0}
 		end
-		ret << data if hoge[idx] == tmp_data.sort && hoge[idx] != [0,0,0,0,0,1]
+		ret << data if base_arr[idx] == tmp_data.sort && base_arr[idx] != [0,0,0,0,0,1]
 	end
 	
 	return ret.inject(:+)
