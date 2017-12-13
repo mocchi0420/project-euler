@@ -95,10 +95,13 @@ op.on('-t','--timeout=SEC','Timeout per problem[sec]'){|v| $timeout = v.to_f }
 args = op.parse(ARGV)
 
 answers_array = IO.readlines('answers.txt')
-          .map{|s| s.match /Problem\s+(\d+):\s+([0-9.]+)/ }
+          .map{|s| s.match /Problem\s+(\d+):\s+([-]*[0-9.]+)/ }
           .reject(&:nil?)
           .map{|mo| [mo[1].to_i, mo[2].to_f] }
 $answers = Hash[answers_array]
+
+p $answers
+
 
 args = ['.'] if args.empty?
 
