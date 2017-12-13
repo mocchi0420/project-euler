@@ -100,8 +100,6 @@ answers_array = IO.readlines('answers.txt')
           .map{|mo| [mo[1].to_i, mo[2].to_f] }
 $answers = Hash[answers_array]
 
-p $answers
-
 
 args = ['.'] if args.empty?
 
