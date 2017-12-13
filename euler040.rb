@@ -45,4 +45,3 @@ def euler040
 	end
 	return ret.map{|d| d.to_i}.inject(:*)
 end
-euler040
