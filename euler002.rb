@@ -2,6 +2,21 @@
 # Problem 2 「偶数のフィボナッチ数」
 
 def euler002(threshold = 4000000)
+	a = b = 1
+	ret = 0
+	while a < threshold && b < threshold do
+		a = a + b
+		break if a >= threshold
+		ret += a if a % 2 == 0
+		b = b + a
+		break if b >= threshold
+		ret += b if b % 2 == 0 
+	end
+	return ret
+end
+
+=begin
+def euler002(threshold = 4000000)
 	memo=[0,1,1]
 	ret = 0
 	memo.length.step do |tmp|
@@ -12,7 +27,6 @@ def euler002(threshold = 4000000)
 	return ret
 end
 
-=begin
 def euler002(threshold = 4000000)
 	ret = 0
 	1.step do |tmp|
