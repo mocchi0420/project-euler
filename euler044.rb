@@ -70,7 +70,6 @@ def euler044
 	return ret
 end
 
-euler044
 =begin
 def euler044
 	ret = 0
