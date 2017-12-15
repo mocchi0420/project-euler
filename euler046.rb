@@ -43,5 +43,5 @@ def euler045
 		t_sqrt = h_sqrt = (1+p_n*8)**0.5
 		ret = p_n if (count+1)%6 == 0 && (t_sqrt-1)%2 == 0 && (h_sqrt+1)%4 == 0
 	end
-	return ret
+	return 
 end
