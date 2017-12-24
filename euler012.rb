@@ -10,7 +10,7 @@
 require 'prime'
 def euler012(num=500)
 	count_lower = (Math.sqrt(Prime.each.take(get_square_index(num)).inject(:*) * 2.0)).floor	#al = n(n+1)/2 > n*n/2より、n=√(2*al)より
-	count_upper =  (Math.sqrt(Prime.each.take(get_square_index(num)+1).inject(:*)*2.0)).ceil	#au = n(n+1)/2 < (n+1)*(n+1)/2より、n=√(2*au)-1より
+	count_upper =  (Math.sqrt(Prime.each.take(get_square_index(num)+1).inject(:*)*2.0)-1).ceil	#au = n(n+1)/2 < (n+1)*(n+1)/2より、n=√(2*au)-1より
 	
 	count_lower.upto(count_upper) do |idx|
 		next if idx.prime? == true || Prime.prime_division(idx *(idx+1)/2).map{|d| d[1]+1}.inject(:*) < num
