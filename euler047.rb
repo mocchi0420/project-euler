@@ -14,14 +14,8 @@ def euler047
 	count = 0
 	while ret == 0 do
 		tmp = get_prime_num(index)
-
-		if tmp.length == 1 then
-			memo.push([index])
-			count = 0 if count != 0
-		else
-			memo.push(tmp.map{|d| memo[d]}.flatten)
-			count = (memo.last.uniq.length == 4) ? count+1 : 0
-		end
+		memo = (tmp.length == 1) ? memo.push([index]) : memo.push(tmp.map{|d| memo[d]}.flatten)
+		count = (memo.last.uniq.length == 4) ? count+1 : 0
 		ret = memo[-4].inject(:*) if count == 4
 		index += 1
 	end
