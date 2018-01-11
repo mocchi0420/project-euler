@@ -2,11 +2,36 @@
 # Problem 25 「1000桁のフィボナッチ数」
 
 # 簡単な方針
-# F(n) = F(n-1) + F(n-2)なので、フィボナッチ数を計算するにあたっては短絡的な計算はできず、愚直に1000桁を初めて超えるn=k項までのk個の数値を算出しないといけない。
-# しかし、フィボナッチ数の再帰的な算出はあまりにも計算時間を要してしまうので、メモ化による短絡計算を試行する。
-# これはn=i項におけるiを添え字としたキャッシュ的配列であり、n=i+1以上の計算においてf(i)までの計算結果を用いたい場合にはこちらを使用できる。
-# あとは流れで。
+# Matrix[[1,1],[1,0]]のべき乗を用いればフィボナッチ数列の数値をlog(n)の計算量で求められることを利用する。
+# これを利用して調べたところ、1000桁の数値は2^12~2^13の間の数値であることが分かったので、1000桁を越えないようにする最大のMatrix[[1,1],[1,0]]の2^n乗を求め続け、
+# それらの2^nを足し合わせたものを出力することを考えた。
+require 'matrix'
+def euler025(index = 1000)
 
+	digit = 0
+	ret = 0
+	flag = true
+	
+	while flag == true	
+		if ((Matrix[[1,1],[1,0]]**((2**digit + ret)))[0,1]).to_s.length >= 1000
+			if digit > 0
+				ret += (2**(digit-1))
+			else
+				ret += 1
+			end
+			digit = 0
+		else
+			digit += 1
+		end
+		
+		if ((Matrix[[1,1],[1,0]]**((ret)))[0,1]).to_s.length == 1000
+			break
+		end
+	end
+	return ret
+end
+
+=begin
 def euler025(index=1000)
 	memo = [0,1]
 	count = 2
@@ -27,3 +52,4 @@ def get_fib(num, memo)
 	end
 	return memo[num]
 end
+=end
